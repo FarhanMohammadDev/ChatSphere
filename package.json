@@ -1,0 +1,16 @@
+{
+  "private": "true",
+  "workspaces": [
+    "server",
+    "frontend"
+  ],
+  "scripts": {
+    "server:dev": "cd server && nodemon",
+    "frontend:dev": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run frontend:dev\" \"npm run server:dev\""
+  },
+
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
