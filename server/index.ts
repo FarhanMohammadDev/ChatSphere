@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
     socket.on('sendMessage',async (dataMsg) => {
         // socket.join(dataMsg)
         console.log(`user with Id : ${socket.id} send Message : ${JSON.stringify(dataMsg)}`);
+        // socket.to(dataMsg.room).emit("receive_message",dataMsg)
         io.to(dataMsg.room).emit("receive_message",dataMsg)
         
      });
