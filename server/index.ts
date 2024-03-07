@@ -22,24 +22,29 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     console.log('a user connected' ,socket.id);
+
     socket.on('disconnect', () => {
         console.log('user disconnected' , socket.id);
     });
 
-    socket.on('join_room', (data) => {
-       socket.join(data)
-       console.log(`user with Id : ${socket.id} joined room : ${data}`);
+    socket.on('join_room', (roomName) => {
+       socket.join(roomName)
+       console.log(`user with Id : ${socket.id} joined room : ${roomName}`);
        
     });
 
+    socket.on('sendMessage',async (dataMsg) => {
+        // socket.join(dataMsg)
+        console.log(`user with Id : ${socket.id} send Message : ${JSON.stringify(dataMsg)}`);
+        io.to(dataMsg.room).emit("receive_message",dataMsg)
+        
+     });
 
 
-
-
-    socket.on('chat message', (msg) => {
-        console.log(msg)
-        io.emit('chat message', msg);
-    });
+    // socket.on('chat message', (msg) => {
+    //     console.log(msg)
+    //     io.emit('chat message', msg);
+    // });
 });
 
 server.listen(PRORT, () => {
