@@ -1,23 +1,47 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import { Server } from 'socket.io';
+import http from 'http';
 import cors from 'cors';
 import "dotenv/config";
-// import connectDB from './configs/db';
 
-// initialisation App
 const app = express();
+const PRORT = process.env.PORT || 8080;
+const server = http.createServer(app);
 
-// apply Middlewares
-app.use(express.json())
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
-app.use(express.urlencoded({extended: true})) // parse data formulaire 
-app.use(cors())
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: false,
+    } 
+});
 
-app.get("",async (req: Request, res: Response)=> {
-        res.json({ message: "Hello from express endpoint"})
-    }
- )
+io.on('connection', (socket) => {
+    console.log('a user connected' ,socket.id);
+    socket.on('disconnect', () => {
+        console.log('user disconnected' , socket.id);
+    });
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT,()=>{console.log("server ranning on localhost:5000")})
+    socket.on('join_room', (data) => {
+       socket.join(data)
+       console.log(`user with Id : ${socket.id} joined room : ${data}`);
+       
+    });
 
-// connectDB()
+
+
+
+
+    socket.on('chat message', (msg) => {
+        console.log(msg)
+        io.emit('chat message', msg);
+    });
+});
+
+server.listen(PRORT, () => {
+    console.log(`Server is listening at http://localhost:${PRORT}`);
+});
