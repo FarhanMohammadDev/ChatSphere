@@ -55,17 +55,14 @@ io.on('connection', (socket) => {
             message: dataMsg.message,
         })
         await newMessage.save()
-
+        const messages = await Message.find({ room: dataMsg.room}).select("-_id -updatedAt -createdAt -__v").exec();;
+        console.log("messages :", messages);
+        
         // socket.to(dataMsg.room).emit("receive_message",dataMsg)
-        io.to(dataMsg.room).emit("receive_message",newMessage)
+        io.to(dataMsg.room).emit("receive_message",messages)
         
      });
 
-
-    // socket.on('chat message', (msg) => {
-    //     console.log(msg)
-    //     io.emit('chat message', msg);
-    // });
 });
 
 server.listen(PRORT, () => {
